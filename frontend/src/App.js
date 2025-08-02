@@ -1,53 +1,137 @@
-import { useEffect } from "react";
-import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
-
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import './App.css';
+import {
+  WelcomePage,
+  LoginPage,
+  RegisterPage,
+  Dashboard,
+  SmartWillBuilder,
+  DocumentVault,
+  DeathTriggerConfig,
+  HeirManagement,
+  ProfileSettings,
+  GriefCompanion,
+  Header,
+  Footer
+} from './components';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check for stored authentication
+    const token = localStorage.getItem('nextera_token');
+    const user = localStorage.getItem('nextera_user');
+    
+    if (token && user) {
+      setIsAuthenticated(true);
+      setCurrentUser(JSON.parse(user));
+    }
+    setLoading(false);
+  }, []);
+
+  const handleLogin = (userData) => {
+    setIsAuthenticated(true);
+    setCurrentUser(userData);
+    localStorage.setItem('nextera_token', userData.token);
+    localStorage.setItem('nextera_user', JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setCurrentUser(null);
+    localStorage.removeItem('nextera_token');
+    localStorage.removeItem('nextera_user');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-blue-600 font-medium">Loading NextEra Estate...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="App">
-      <BrowserRouter>
+    <Router>
+      <div className="App min-h-screen bg-gray-50">
+        {isAuthenticated && <Header user={currentUser} onLogout={handleLogout} />}
+        
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
+          {/* Public routes */}
+          <Route 
+            path="/" 
+            element={
+              isAuthenticated ? <Navigate to="/dashboard" /> : <WelcomePage />
+            } 
+          />
+          <Route 
+            path="/login" 
+            element={
+              isAuthenticated ? <Navigate to="/dashboard" /> : <LoginPage onLogin={handleLogin} />
+            } 
+          />
+          <Route 
+            path="/register" 
+            element={
+              isAuthenticated ? <Navigate to="/dashboard" /> : <RegisterPage onLogin={handleLogin} />
+            } 
+          />
+
+          {/* Protected routes */}
+          <Route 
+            path="/dashboard" 
+            element={
+              isAuthenticated ? <Dashboard user={currentUser} /> : <Navigate to="/login" />
+            } 
+          />
+          <Route 
+            path="/will-builder" 
+            element={
+              isAuthenticated ? <SmartWillBuilder user={currentUser} /> : <Navigate to="/login" />
+            } 
+          />
+          <Route 
+            path="/vault" 
+            element={
+              isAuthenticated ? <DocumentVault user={currentUser} /> : <Navigate to="/login" />
+            } 
+          />
+          <Route 
+            path="/death-trigger" 
+            element={
+              isAuthenticated ? <DeathTriggerConfig user={currentUser} /> : <Navigate to="/login" />
+            } 
+          />
+          <Route 
+            path="/heirs" 
+            element={
+              isAuthenticated ? <HeirManagement user={currentUser} /> : <Navigate to="/login" />
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              isAuthenticated ? <ProfileSettings user={currentUser} /> : <Navigate to="/login" />
+            } 
+          />
+          <Route 
+            path="/grief-companion" 
+            element={
+              isAuthenticated ? <GriefCompanion user={currentUser} /> : <Navigate to="/login" />
+            } 
+          />
         </Routes>
-      </BrowserRouter>
-    </div>
+
+        {!isAuthenticated && <Footer />}
+      </div>
+    </Router>
   );
 }
 
