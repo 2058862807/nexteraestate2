@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 // Header Component
 export const Header = ({ user, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navigate = useNavigate();
 
   return (
     <header className="bg-white shadow-lg border-b border-blue-100">
