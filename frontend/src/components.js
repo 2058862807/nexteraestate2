@@ -590,3 +590,388 @@ export const RegisterPage = ({ onLogin }) => {
     </div>
   );
 };
+
+// Dashboard Component
+export const Dashboard = ({ user }) => {
+  const [stats, setStats] = useState({
+    documentsStored: 0,
+    willCompletion: 0,
+    heirsConfigured: 0,
+    lastBackup: null
+  });
+  const [notifications, setNotifications] = useState([]);
+  const [complianceStatus, setComplianceStatus] = useState('checking');
+
+  useEffect(() => {
+    // Simulate loading dashboard data
+    setTimeout(() => {
+      setStats({
+        documentsStored: 23,
+        willCompletion: 75,
+        heirsConfigured: 3,
+        lastBackup: new Date().toISOString().split('T')[0]
+      });
+      
+      setNotifications([
+        {
+          id: 1,
+          type: 'warning',
+          title: 'Will Update Required',
+          message: 'California estate laws have changed. Review your will.',
+          timestamp: '2 hours ago'
+        },
+        {
+          id: 2,
+          type: 'success',
+          title: 'Backup Complete',
+          message: 'All documents successfully backed up to secure cloud.',
+          timestamp: '1 day ago'
+        },
+        {
+          id: 3,
+          type: 'info',
+          title: 'New Feature Available',
+          message: 'AI Grief Companion is now available for your heirs.',
+          timestamp: '3 days ago'
+        }
+      ]);
+
+      setComplianceStatus('compliant');
+    }, 1000);
+  }, []);
+
+  const navigate = useNavigate();
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">
+            Welcome back, {user?.name?.split(' ')[0]}
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Here's an overview of your estate planning progress
+          </p>
+        </div>
+
+        {/* Compliance Status Banner */}
+        <div className={`mb-8 p-4 rounded-lg border-l-4 ${
+          complianceStatus === 'compliant' ? 'bg-green-50 border-green-400' :
+          complianceStatus === 'warning' ? 'bg-yellow-50 border-yellow-400' :
+          'bg-blue-50 border-blue-400'
+        }`}>
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              {complianceStatus === 'compliant' ? '✅' : 
+               complianceStatus === 'warning' ? '⚠️' : '🔄'}
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-gray-800">
+                {complianceStatus === 'compliant' ? 'Fully Compliant' :
+                 complianceStatus === 'warning' ? 'Compliance Update Required' :
+                 'Checking Compliance...'}
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                {complianceStatus === 'compliant' 
+                  ? `Your estate plan complies with current ${user?.jurisdiction} laws.`
+                  : complianceStatus === 'warning'
+                  ? 'Some documents may need updates due to recent law changes.'
+                  : 'AI is validating your documents against current regulations...'
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard
+            title="Documents Stored"
+            value={stats.documentsStored}
+            icon="📄"
+            color="blue"
+            onClick={() => navigate('/vault')}
+          />
+          <StatCard
+            title="Will Completion"
+            value={`${stats.willCompletion}%`}
+            icon="📝"
+            color="green"
+            onClick={() => navigate('/will-builder')}
+          />
+          <StatCard
+            title="Heirs Configured"
+            value={stats.heirsConfigured}
+            icon="👥"
+            color="purple"
+            onClick={() => navigate('/heirs')}
+          />
+          <StatCard
+            title="Last Backup"
+            value={stats.lastBackup}
+            icon="☁️"
+            color="indigo"
+            onClick={() => navigate('/profile')}
+          />
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Quick Actions */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <QuickActionCard
+                  icon="🤖"
+                  title="Continue Will Builder"
+                  description="Resume building your AI-powered will"
+                  action="Continue"
+                  onClick={() => navigate('/will-builder')}
+                />
+                <QuickActionCard
+                  icon="📤"
+                  title="Upload Documents"
+                  description="Add important documents to your vault"
+                  action="Upload"
+                  onClick={() => navigate('/vault')}
+                />
+                <QuickActionCard
+                  icon="👥"
+                  title="Manage Heirs"
+                  description="Configure beneficiaries and roles"
+                  action="Manage"
+                  onClick={() => navigate('/heirs')}
+                />
+                <QuickActionCard
+                  icon="⚙️"
+                  title="Death Trigger Setup"
+                  description="Configure automated triggers"
+                  action="Setup"
+                  onClick={() => navigate('/death-trigger')}
+                />
+              </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Recent Activity</h2>
+              <div className="space-y-4">
+                <ActivityItem
+                  action="Document uploaded"
+                  description="Life Insurance Policy (Policy_2025.pdf)"
+                  time="2 hours ago"
+                  icon="📄"
+                />
+                <ActivityItem
+                  action="Will updated"
+                  description="Beneficiary information modified"
+                  time="1 day ago"
+                  icon="📝"
+                />
+                <ActivityItem
+                  action="Heir added"
+                  description="Sarah Doe added as secondary beneficiary"
+                  time="3 days ago"
+                  icon="👥"
+                />
+                <ActivityItem
+                  action="Compliance check"
+                  description="Estate plan validated against California laws"
+                  time="1 week ago"
+                  icon="✅"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Notifications */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Notifications</h3>
+              <div className="space-y-3">
+                {notifications.map((notification) => (
+                  <div key={notification.id} className="border-l-4 border-blue-400 pl-4 py-2">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">
+                          {notification.title}
+                        </p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {notification.message}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {notification.timestamp}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* AI Assistant */}
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">AI Assistant</h3>
+              <div className="text-center">
+                <div className="text-4xl mb-3">🤖</div>
+                <p className="text-sm text-gray-600 mb-4">
+                  Need help with your estate planning? Our AI assistant is here to guide you.
+                </p>
+                <button
+                  onClick={() => navigate('/grief-companion')}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                >
+                  Chat with AI
+                </button>
+              </div>
+            </div>
+
+            {/* Security Status */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Security Status</h3>
+              <div className="space-y-3">
+                <SecurityStatusItem
+                  label="Encryption"
+                  status="Active"
+                  icon="🔐"
+                  isGood={true}
+                />
+                <SecurityStatusItem
+                  label="Biometric Auth"
+                  status={user?.biometricEnabled ? "Enabled" : "Setup Required"}
+                  icon="🧬"
+                  isGood={user?.biometricEnabled}
+                />
+                <SecurityStatusItem
+                  label="Backup Status"
+                  status="Current"
+                  icon="☁️"
+                  isGood={true}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Helper Components
+const StatCard = ({ title, value, icon, color, onClick }) => (
+  <div 
+    onClick={onClick}
+    className={`bg-white rounded-xl shadow-sm p-6 cursor-pointer hover:shadow-md transition-shadow duration-200 border-l-4 border-${color}-500`}
+  >
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm font-medium text-gray-600">{title}</p>
+        <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+      </div>
+      <div className="text-2xl">{icon}</div>
+    </div>
+  </div>
+);
+
+const QuickActionCard = ({ icon, title, description, action, onClick }) => (
+  <div className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-sm transition-all duration-200">
+    <div className="flex items-start space-x-3">
+      <div className="text-2xl">{icon}</div>
+      <div className="flex-1">
+        <h3 className="font-medium text-gray-900">{title}</h3>
+        <p className="text-sm text-gray-600 mt-1">{description}</p>
+        <button
+          onClick={onClick}
+          className="text-blue-600 text-sm font-medium mt-2 hover:text-blue-700"
+        >
+          {action} →
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+const ActivityItem = ({ action, description, time, icon }) => (
+  <div className="flex items-start space-x-3 py-2">
+    <div className="text-lg">{icon}</div>
+    <div className="flex-1">
+      <p className="text-sm font-medium text-gray-900">{action}</p>
+      <p className="text-xs text-gray-600">{description}</p>
+      <p className="text-xs text-gray-400 mt-1">{time}</p>
+    </div>
+  </div>
+);
+
+const SecurityStatusItem = ({ label, status, icon, isGood }) => (
+  <div className="flex items-center justify-between">
+    <div className="flex items-center space-x-2">
+      <span className="text-sm">{icon}</span>
+      <span className="text-sm text-gray-700">{label}</span>
+    </div>
+    <span className={`text-xs px-2 py-1 rounded-full ${
+      isGood ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+    }`}>
+      {status}
+    </span>
+  </div>
+);
+
+// Footer Component
+export const Footer = () => (
+  <footer className="bg-gray-900 text-white py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="mb-8 md:mb-0">
+          <div className="flex items-center space-x-2 mb-4">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold">NE</span>
+            </div>
+            <span className="text-xl font-bold">NextEra Estate</span>
+          </div>
+          <p className="text-gray-400 text-sm">
+            Securing digital legacies with AI-powered estate planning and military-grade encryption.
+          </p>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Platform</h3>
+          <ul className="space-y-2 text-sm text-gray-400">
+            <li><a href="#" className="hover:text-white">Will Builder</a></li>
+            <li><a href="#" className="hover:text-white">Document Vault</a></li>
+            <li><a href="#" className="hover:text-white">Heir Management</a></li>
+            <li><a href="#" className="hover:text-white">AI Companion</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Security</h3>
+          <ul className="space-y-2 text-sm text-gray-400">
+            <li><a href="#" className="hover:text-white">Encryption</a></li>
+            <li><a href="#" className="hover:text-white">Biometric Auth</a></li>
+            <li><a href="#" className="hover:text-white">Compliance</a></li>
+            <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Support</h3>
+          <ul className="space-y-2 text-sm text-gray-400">
+            <li><a href="#" className="hover:text-white">Help Center</a></li>
+            <li><a href="#" className="hover:text-white">Contact Us</a></li>
+            <li><a href="#" className="hover:text-white">Legal Resources</a></li>
+            <li><a href="#" className="hover:text-white">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+        <p className="text-gray-400 text-sm">
+          © 2025 NextEra Estate. All rights reserved. | Jurisdictional compliance powered by AI
+        </p>
+      </div>
+    </div>
+  </footer>
+);
