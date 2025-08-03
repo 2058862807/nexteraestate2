@@ -128,6 +128,12 @@ function App() {
               isAuthenticated ? <GriefCompanion user={currentUser} /> : <Navigate to="/login" />
             } 
           />
+          <Route 
+            path="/blockchain" 
+            element={
+              isAuthenticated ? <BlockchainWallet user={currentUser} /> : <Navigate to="/login" />
+            } 
+          />
         </Routes>
 
         {!isAuthenticated && <Footer />}
