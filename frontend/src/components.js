@@ -1135,12 +1135,15 @@ export const BlockchainWallet = ({ user }) => {
 export const SmartWillBuilder = ({ user }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [blockchainEnabled, setBlockchainEnabled] = useState(false);
+  const [notarized, setNotarized] = useState(false);
 
   const steps = [
     { id: 1, title: 'Personal Info', icon: '👤' },
     { id: 2, title: 'Assets', icon: '🏠' },
     { id: 3, title: 'Beneficiaries', icon: '👥' },
-    { id: 4, title: 'Review', icon: '✅' }
+    { id: 4, title: 'Blockchain', icon: '🔗' },
+    { id: 5, title: 'Review', icon: '✅' }
   ];
 
   const handleNext = () => {
