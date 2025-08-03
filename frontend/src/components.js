@@ -394,7 +394,7 @@ export const LoginPage = ({ onLogin }) => {
   );
 };
 
-// Register Page Component
+// Register Page Component with 50-State Integration
 export const RegisterPage = ({ onLogin }) => {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -406,20 +406,20 @@ export const RegisterPage = ({ onLogin }) => {
     acceptTerms: false
   });
   const [loading, setLoading] = useState(false);
-  const [jurisdictions] = useState([
-    'California, USA',
-    'New York, USA',
-    'Texas, USA',
-    'Florida, USA',
-    'Illinois, USA',
-    'Ontario, Canada',
-    'British Columbia, Canada',
-    'United Kingdom',
-    'Germany',
-    'France',
-    'Australia',
-    'Other'
-  ]);
+  const [selectedState, setSelectedState] = useState(null);
+  const [stateInfo, setStateInfo] = useState(null);
+
+  // Get all 50 states for dropdown
+  const allStates = stateComplianceService.getAllStates();
+
+  const handleStateChange = (stateCode) => {
+    setFormData({...formData, jurisdiction: stateCode});
+    if (stateCode) {
+      const compliance = stateComplianceService.getStateCompliance(stateCode);
+      setSelectedState(stateCode);
+      setStateInfo(compliance);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
