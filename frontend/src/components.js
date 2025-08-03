@@ -509,21 +509,38 @@ export const RegisterPage = ({ onLogin }) => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Jurisdiction
+                State/Jurisdiction
               </label>
               <select
                 required
                 value={formData.jurisdiction}
-                onChange={(e) => setFormData({...formData, jurisdiction: e.target.value})}
+                onChange={(e) => handleStateChange(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               >
-                <option value="">Select your jurisdiction</option>
-                {jurisdictions.map((jurisdiction) => (
-                  <option key={jurisdiction} value={jurisdiction}>
-                    {jurisdiction}
+                <option value="">Select your state</option>
+                {allStates.map((state) => (
+                  <option key={state.code} value={state.code}>
+                    {state.fullName}
                   </option>
                 ))}
               </select>
+              
+              {stateInfo && (
+                <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <h4 className="font-medium text-blue-900 text-sm mb-2">
+                    📍 {stateInfo.fullName} Requirements:
+                  </h4>
+                  <ul className="text-xs text-blue-800 space-y-1">
+                    <li>• Minimum age: {stateInfo.willRequirements.minimumAge} years</li>
+                    <li>• Witnesses required: {stateInfo.willRequirements.witnessesRequired}</li>
+                    <li>• Notarization: {stateInfo.willRequirements.notarizationRequired ? 'Required' : 'Optional'}</li>
+                    <li>• Holographic wills: {stateInfo.willRequirements.holographicWills ? 'Allowed' : 'Not recognized'}</li>
+                    {stateInfo.inheritance.estateTaxThreshold > 0 && (
+                      <li>• State estate tax: ${stateInfo.inheritance.estateTaxThreshold.toLocaleString()} threshold</li>
+                    )}
+                  </ul>
+                </div>
+              )}
             </div>
 
             <div>
