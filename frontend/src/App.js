@@ -13,6 +13,7 @@ import {
   ProfileSettings,
   GriefCompanion,
   BlockchainWallet,
+  StateComplianceDashboard,
   Header,
   Footer
 } from './components';
