@@ -135,6 +135,12 @@ function App() {
               isAuthenticated ? <BlockchainWallet user={currentUser} /> : <Navigate to="/login" />
             } 
           />
+          <Route 
+            path="/compliance" 
+            element={
+              isAuthenticated ? <StateComplianceDashboard user={currentUser} /> : <Navigate to="/login" />
+            } 
+          />
         </Routes>
 
         {!isAuthenticated && <Footer />}
