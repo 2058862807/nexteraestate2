@@ -1525,7 +1525,7 @@ export const SmartWillBuilder = ({ user }) => {
     personalInfo: { 
       fullName: user?.name || '', 
       age: '', 
-      state: user?.jurisdiction || '',
+      state: getUserStateCode(user?.jurisdiction),
       maritalStatus: ''
     },
     assets: [],
