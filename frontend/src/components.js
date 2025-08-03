@@ -845,7 +845,7 @@ export const Dashboard = ({ user }) => {
               <div className="text-center">
                 <div className="text-4xl mb-3">⚖️</div>
                 <p className="text-sm text-gray-600 mb-4">
-                  Your estate plan is validated against {user?.jurisdiction || 'CA'} state laws
+                  Your estate plan is validated against {US_STATES_COMPLIANCE[getUserStateCode(user?.jurisdiction)]?.fullName || 'California'} state laws
                 </p>
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between">
