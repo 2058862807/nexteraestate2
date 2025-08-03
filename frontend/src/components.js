@@ -813,6 +813,37 @@ export const Dashboard = ({ user }) => {
               </div>
             </div>
 
+            {/* Blockchain Status */}
+            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">🔗 Blockchain Status</h3>
+              <div className="text-center">
+                <div className="text-4xl mb-3">⛓️</div>
+                <p className="text-sm text-gray-600 mb-4">
+                  Your estate documents are secured with blockchain technology
+                </p>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between">
+                    <span>Documents Notarized:</span>
+                    <span className="text-green-600 font-medium">3</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Smart Contracts:</span>
+                    <span className="text-blue-600 font-medium">1 Active</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Network:</span>
+                    <span className="text-purple-600 font-medium">Ethereum</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => navigate('/blockchain')}
+                  className="mt-4 bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 transition-colors"
+                >
+                  Manage Blockchain
+                </button>
+              </div>
+            </div>
+
             {/* AI Assistant */}
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl shadow-sm p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">AI Assistant</h3>
