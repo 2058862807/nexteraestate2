@@ -918,6 +918,516 @@ const SecurityStatusItem = ({ label, status, icon, isGood }) => (
   </div>
 );
 
+// Smart Will Builder Component
+export const SmartWillBuilder = ({ user }) => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  const steps = [
+    { id: 1, title: 'Personal Info', icon: '👤' },
+    { id: 2, title: 'Assets', icon: '🏠' },
+    { id: 3, title: 'Beneficiaries', icon: '👥' },
+    { id: 4, title: 'Review', icon: '✅' }
+  ];
+
+  const handleNext = () => {
+    if (currentStep < steps.length) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const generateWill = () => {
+    setLoading(true);
+    setTimeout(() => {
+      alert('Will generated successfully! Check your vault for the document.');
+      setLoading(false);
+    }, 2000);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">AI Smart Will Builder</h1>
+          <p className="text-gray-600">Create a legally compliant will for {user?.jurisdiction}</p>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm p-8">
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              {steps.map((step) => (
+                <div key={step.id} className="flex flex-col items-center">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold mb-2 ${
+                    currentStep >= step.id ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    {step.icon}
+                  </div>
+                  <span className="text-xs text-gray-600">{step.title}</span>
+                </div>
+              ))}
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(currentStep / steps.length) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+
+          {/* Step Content */}
+          <div className="min-h-64 mb-8">
+            {currentStep === 1 && (
+              <div>
+                <h2 className="text-xl font-bold mb-4">Personal Information</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input type="text" placeholder="Full Name" className="border rounded-lg px-3 py-2" />
+                  <input type="date" placeholder="Date of Birth" className="border rounded-lg px-3 py-2" />
+                  <select className="border rounded-lg px-3 py-2">
+                    <option>Marital Status</option>
+                    <option>Single</option>
+                    <option>Married</option>
+                    <option>Divorced</option>
+                  </select>
+                </div>
+              </div>
+            )}
+            {currentStep === 2 && (
+              <div>
+                <h2 className="text-xl font-bold mb-4">Assets & Property</h2>
+                <div className="space-y-4">
+                  <div className="border rounded-lg p-4">
+                    <h3 className="font-semibold mb-2">Real Estate</h3>
+                    <button className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg">+ Add Property</button>
+                  </div>
+                  <div className="border rounded-lg p-4">
+                    <h3 className="font-semibold mb-2">Bank Accounts</h3>
+                    <button className="bg-blue-100 text-blue-700 px-4 py-2 rounded-lg">+ Add Account</button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {currentStep === 3 && (
+              <div>
+                <h2 className="text-xl font-bold mb-4">Beneficiaries</h2>
+                <div className="border rounded-lg p-4">
+                  <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">+ Add Beneficiary</button>
+                </div>
+              </div>
+            )}
+            {currentStep === 4 && (
+              <div>
+                <h2 className="text-xl font-bold mb-4">Review Your Will</h2>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <p className="text-green-800">✅ Your will is ready to be generated</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Navigation */}
+          <div className="flex justify-between">
+            <button
+              onClick={handlePrevious}
+              disabled={currentStep === 1}
+              className="px-6 py-2 border border-gray-300 rounded-lg disabled:opacity-50"
+            >
+              Previous
+            </button>
+            
+            {currentStep === steps.length ? (
+              <button
+                onClick={generateWill}
+                disabled={loading}
+                className="px-8 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+              >
+                {loading ? 'Generating...' : 'Generate Will'}
+              </button>
+            ) : (
+              <button
+                onClick={handleNext}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg"
+              >
+                Next
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Document Vault Component
+export const DocumentVault = ({ user }) => {
+  const [documents] = useState([
+    { id: 1, name: 'Will.pdf', type: 'PDF', size: '2.4 MB', date: '2025-01-15' },
+    { id: 2, name: 'Insurance.pdf', type: 'PDF', size: '1.8 MB', date: '2025-01-10' }
+  ]);
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Secure Document Vault</h1>
+            <p className="text-gray-600">AES-256 encrypted storage</p>
+          </div>
+          <button className="bg-blue-600 text-white px-6 py-3 rounded-lg">
+            📤 Upload Documents
+          </button>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h3 className="text-lg font-semibold mb-4">Your Documents</h3>
+          <div className="space-y-3">
+            {documents.map((doc) => (
+              <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center space-x-4">
+                  <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                    <span className="text-red-600 text-xs font-semibold">{doc.type}</span>
+                  </div>
+                  <div>
+                    <h4 className="font-medium">{doc.name}</h4>
+                    <p className="text-sm text-gray-500">{doc.size} • {doc.date}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-600 text-xs bg-green-100 px-2 py-1 rounded">🔒 Encrypted</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Death Trigger Configuration Component
+export const DeathTriggerConfig = ({ user }) => {
+  const [activeTab, setActiveTab] = useState('manual');
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Death Trigger Configuration</h1>
+          <p className="text-gray-600">Configure automated estate activation systems</p>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm">
+          <div className="border-b border-gray-200">
+            <nav className="flex space-x-8 px-6">
+              {[
+                { id: 'manual', name: 'Manual Triggers', icon: '👥' },
+                { id: 'automatic', name: 'Automatic Triggers', icon: '🤖' }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === tab.id ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'
+                  }`}
+                >
+                  <span className="mr-2">{tab.icon}</span>
+                  {tab.name}
+                </button>
+              ))}
+            </nav>
+          </div>
+
+          <div className="p-6">
+            {activeTab === 'manual' && (
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Manual Trigger Methods</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="border rounded-lg p-6">
+                    <h4 className="font-medium mb-2">👥 Trusted Contacts</h4>
+                    <p className="text-sm text-gray-600 mb-4">Designated family members can activate your estate plan</p>
+                    <button className="text-blue-600 text-sm">Manage Contacts →</button>
+                  </div>
+                  <div className="border rounded-lg p-6">
+                    <h4 className="font-medium mb-2">🔑 Emergency Code</h4>
+                    <p className="text-sm text-gray-600 mb-4">Secure code for immediate activation</p>
+                    <button className="text-blue-600 text-sm">Generate Code →</button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {activeTab === 'automatic' && (
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Automatic Trigger Systems</h3>
+                <div className="border rounded-lg p-6">
+                  <h4 className="font-medium mb-2">⏰ Inactivity Timer</h4>
+                  <p className="text-sm text-gray-600 mb-4">Triggers after extended periods of no activity</p>
+                  <select className="border rounded px-3 py-2">
+                    <option>90 days</option>
+                    <option>180 days</option>
+                    <option>1 year</option>
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Heir Management Component
+export const HeirManagement = ({ user }) => {
+  const [heirs] = useState([
+    { id: 1, name: 'Sarah Doe', relationship: 'Sister', email: 'sarah@example.com', percentage: 60, status: 'verified' },
+    { id: 2, name: 'Michael Doe', relationship: 'Son', email: 'michael@example.com', percentage: 30, status: 'pending' },
+    { id: 3, name: 'Children\'s Hospital', relationship: 'Charity', email: 'donations@hospital.org', percentage: 10, status: 'verified' }
+  ]);
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Heir Management</h1>
+            <p className="text-gray-600">Manage beneficiaries and estate distribution</p>
+          </div>
+          <button className="bg-blue-600 text-white px-6 py-3 rounded-lg">
+            👥 Add Heir
+          </button>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm">
+          <div className="p-6 border-b border-gray-200">
+            <h3 className="text-lg font-semibold">Beneficiaries & Heirs</h3>
+          </div>
+          
+          <div className="divide-y divide-gray-200">
+            {heirs.map((heir) => (
+              <div key={heir.id} className="p-6 hover:bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                      {heir.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">{heir.name}</h4>
+                      <p className="text-sm text-gray-600">{heir.relationship}</p>
+                      <p className="text-sm text-gray-500">{heir.email}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <div className="text-right">
+                      <div className="text-lg font-bold">{heir.percentage}%</div>
+                      <div className="text-xs text-gray-500">of estate</div>
+                    </div>
+                    <span className={`px-2 py-1 text-xs rounded ${
+                      heir.status === 'verified' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {heir.status === 'verified' ? '✅ Verified' : '⏳ Pending'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Profile Settings Component
+export const ProfileSettings = ({ user }) => {
+  const [activeTab, setActiveTab] = useState('profile');
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Profile & Settings</h1>
+          <p className="text-gray-600">Manage your account and security preferences</p>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm">
+          <div className="border-b border-gray-200">
+            <nav className="flex space-x-8 px-6">
+              {[
+                { id: 'profile', name: 'Profile', icon: '👤' },
+                { id: 'security', name: 'Security', icon: '🔒' }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === tab.id ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500'
+                  }`}
+                >
+                  <span className="mr-2">{tab.icon}</span>
+                  {tab.name}
+                </button>
+              ))}
+            </nav>
+          </div>
+
+          <div className="p-6">
+            {activeTab === 'profile' && (
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold">Personal Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                    <input type="text" defaultValue={user?.name?.split(' ')[0] || ''} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                    <input type="text" defaultValue={user?.name?.split(' ')[1] || ''} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" defaultValue={user?.email || ''} className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Jurisdiction</label>
+                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                      <option>California, USA</option>
+                      <option>New York, USA</option>
+                      <option>Texas, USA</option>
+                    </select>
+                  </div>
+                </div>
+                <button className="bg-blue-600 text-white px-6 py-2 rounded-lg">Save Changes</button>
+              </div>
+            )}
+            {activeTab === 'security' && (
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold">Security Settings</h3>
+                <div className="border rounded-lg p-6">
+                  <h4 className="font-medium mb-2">🧬 Biometric Authentication</h4>
+                  <p className="text-sm text-gray-600 mb-4">Use fingerprint or face recognition</p>
+                  <button className="text-blue-600 text-sm">Configure Settings →</button>
+                </div>
+                <div className="border rounded-lg p-6">
+                  <h4 className="font-medium mb-4">🔐 Encryption Status</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Document Encryption</span>
+                      <span className="text-green-600 text-sm">AES-256 ✅</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Data Transmission</span>
+                      <span className="text-green-600 text-sm">TLS 1.3 ✅</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Grief Companion Component
+export const GriefCompanion = ({ user }) => {
+  const [messages, setMessages] = useState([
+    { id: 1, type: 'ai', content: 'Hello, I\'m here to provide support during this difficult time. How are you feeling today?', timestamp: new Date() }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+
+  const handleSendMessage = () => {
+    if (!inputMessage.trim()) return;
+
+    const userMessage = { id: messages.length + 1, type: 'user', content: inputMessage, timestamp: new Date() };
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsTyping(true);
+
+    setTimeout(() => {
+      const aiResponse = { id: messages.length + 2, type: 'ai', content: 'I understand this is challenging. Would you like to share what\'s on your mind?', timestamp: new Date() };
+      setMessages(prev => [...prev, aiResponse]);
+      setIsTyping(false);
+    }, 2000);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">AI Grief Companion</h1>
+          <p className="text-gray-600">Compassionate support with memory playback and guidance</p>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm h-96 flex flex-col">
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white">💜</div>
+              <div>
+                <h3 className="font-medium">Compassionate AI</h3>
+                <p className="text-sm text-gray-500">Here to listen and support you</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.map((message) => (
+              <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-xs px-4 py-2 rounded-lg ${
+                  message.type === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900'
+                }`}>
+                  <p className="text-sm">{message.content}</p>
+                  <p className={`text-xs mt-1 ${message.type === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
+                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
+              </div>
+            ))}
+            {isTyping && (
+              <div className="flex justify-start">
+                <div className="bg-gray-100 px-4 py-2 rounded-lg">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="p-4 border-t border-gray-200">
+            <div className="flex space-x-3">
+              <input
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                placeholder="Share your thoughts or feelings..."
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleSendMessage}
+                disabled={!inputMessage.trim() || isTyping}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Footer Component
 export const Footer = () => (
   <footer className="bg-gray-900 text-white py-12">
