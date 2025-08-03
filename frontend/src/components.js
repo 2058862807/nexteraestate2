@@ -1255,9 +1255,58 @@ export const SmartWillBuilder = ({ user }) => {
             )}
             {currentStep === 4 && (
               <div>
+                <h2 className="text-xl font-bold mb-4">🔗 Blockchain Notarization</h2>
+                <div className="space-y-6">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                    <h3 className="font-semibold text-blue-900 mb-3">Secure Your Will on the Blockchain</h3>
+                    <p className="text-blue-800 mb-4">
+                      Enable blockchain notarization for immutable proof of your will's authenticity and timestamp.
+                    </p>
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        checked={blockchainEnabled}
+                        onChange={(e) => setBlockchainEnabled(e.target.checked)}
+                        className="w-5 h-5 text-blue-600"
+                      />
+                      <span className="font-medium">Enable Blockchain Notarization</span>
+                    </label>
+                  </div>
+                  
+                  {blockchainEnabled && (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                      <h4 className="font-semibold text-green-900 mb-3">✅ Blockchain Features Enabled</h4>
+                      <ul className="text-green-800 space-y-2 text-sm">
+                        <li>• Immutable document hash stored on Ethereum</li>
+                        <li>• Tamper-proof timestamp verification</li>
+                        <li>• Smart contract automated execution</li>
+                        <li>• Decentralized backup on IPFS</li>
+                        <li>• Multi-signature validation for changes</li>
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {notarized && (
+                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+                      <h4 className="font-semibold text-purple-900 mb-2">🎉 Successfully Notarized!</h4>
+                      <p className="text-purple-800 text-sm">Your will has been permanently recorded on the blockchain</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            {currentStep === 5 && (
+              <div>
                 <h2 className="text-xl font-bold mb-4">Review Your Will</h2>
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <p className="text-green-800">✅ Your will is ready to be generated</p>
+                <div className="space-y-4">
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <p className="text-green-800">✅ Your will is ready to be generated</p>
+                  </div>
+                  {blockchainEnabled && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <p className="text-blue-800">🔗 Blockchain notarization enabled - immutable proof included</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
