@@ -1377,12 +1377,23 @@ export const SmartWillBuilder = ({ user }) => {
   );
 };
 
-// Document Vault Component
+// Document Vault Component with Blockchain Notarization
 export const DocumentVault = ({ user }) => {
   const [documents] = useState([
-    { id: 1, name: 'Will.pdf', type: 'PDF', size: '2.4 MB', date: '2025-01-15' },
-    { id: 2, name: 'Insurance.pdf', type: 'PDF', size: '1.8 MB', date: '2025-01-10' }
+    { id: 1, name: 'Will.pdf', type: 'PDF', size: '2.4 MB', date: '2025-01-15', notarized: true, txHash: '0xabc...123' },
+    { id: 2, name: 'Insurance.pdf', type: 'PDF', size: '1.8 MB', date: '2025-01-10', notarized: false }
   ]);
+
+  const notarizeDocument = async (docId) => {
+    const doc = documents.find(d => d.id === docId);
+    const result = await blockchainService.notarizeDocument(doc);
+    
+    if (result.success) {
+      alert(`Document notarized!\nTransaction: ${result.transactionHash}\nBlock: ${result.blockNumber}`);
+    } else {
+      alert('Notarization failed: ' + result.error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
