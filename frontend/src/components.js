@@ -1291,17 +1291,132 @@ export const SmartWillBuilder = ({ user }) => {
           <div className="min-h-64 mb-8">
             {currentStep === 1 && (
               <div>
-                <h2 className="text-xl font-bold mb-4">Personal Information</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input type="text" placeholder="Full Name" className="border rounded-lg px-3 py-2" />
-                  <input type="date" placeholder="Date of Birth" className="border rounded-lg px-3 py-2" />
-                  <select className="border rounded-lg px-3 py-2">
-                    <option>Marital Status</option>
-                    <option>Single</option>
-                    <option>Married</option>
-                    <option>Divorced</option>
-                  </select>
+                <h2 className="text-xl font-bold mb-6">Personal Information</h2>
+                
+                {/* Real-time Compliance Status */}
+                {complianceStatus && (
+                  <div className={`mb-6 p-4 rounded-lg border ${
+                    complianceStatus.isValid 
+                      ? 'bg-green-50 border-green-200' 
+                      : 'bg-yellow-50 border-yellow-200'
+                  }`}>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span className={complianceStatus.isValid ? 'text-green-600' : 'text-yellow-600'}>
+                        {complianceStatus.isValid ? '✅' : '⚠️'}
+                      </span>
+                      <h3 className="font-medium">
+                        {complianceStatus.state} Compliance Status
+                      </h3>
+                    </div>
+                    {complianceStatus.errors.map((error, idx) => (
+                      <p key={idx} className="text-red-600 text-sm">• {error}</p>
+                    ))}
+                    {complianceStatus.warnings.map((warning, idx) => (
+                      <p key={idx} className="text-yellow-600 text-sm">• {warning}</p>
+                    ))}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Full Legal Name</label>
+                    <input 
+                      type="text" 
+                      placeholder="Enter your full legal name"
+                      value={willData.personalInfo.fullName}
+                      onChange={(e) => setWillData({
+                        ...willData,
+                        personalInfo: { ...willData.personalInfo, fullName: e.target.value }
+                      })}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Age</label>
+                    <input 
+                      type="number" 
+                      placeholder="Your age"
+                      value={willData.personalInfo.age}
+                      onChange={(e) => setWillData({
+                        ...willData,
+                        personalInfo: { ...willData.personalInfo, age: parseInt(e.target.value) }
+                      })}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">State of Residence</label>
+                    <select 
+                      value={willData.personalInfo.state}
+                      onChange={(e) => setWillData({
+                        ...willData,
+                        personalInfo: { ...willData.personalInfo, state: e.target.value }
+                      })}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select your state</option>
+                      {stateComplianceService.getAllStates().map((state) => (
+                        <option key={state.code} value={state.code}>
+                          {state.fullName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Marital Status</label>
+                    <select 
+                      value={willData.personalInfo.maritalStatus}
+                      onChange={(e) => setWillData({
+                        ...willData,
+                        personalInfo: { ...willData.personalInfo, maritalStatus: e.target.value }
+                      })}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select status</option>
+                      <option value="single">Single</option>
+                      <option value="married">Married</option>
+                      <option value="divorced">Divorced</option>
+                      <option value="widowed">Widowed</option>
+                    </select>
+                  </div>
                 </div>
+
+                {/* State-Specific Requirements Display */}
+                {stateRequirements && (
+                  <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <h3 className="font-semibold text-blue-900 mb-3">
+                      📍 {stateRequirements.fullName} Will Requirements
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p><strong>Minimum Age:</strong> {stateRequirements.willRequirements.minimumAge} years</p>
+                        <p><strong>Witnesses Required:</strong> {stateRequirements.willRequirements.witnessesRequired}</p>
+                        <p><strong>Notarization:</strong> {stateRequirements.willRequirements.notarizationRequired ? 'Required' : 'Optional'}</p>
+                      </div>
+                      <div>
+                        <p><strong>Holographic Wills:</strong> {stateRequirements.willRequirements.holographicWills ? 'Allowed' : 'Not recognized'}</p>
+                        <p><strong>Self-Proving Affidavit:</strong> {stateRequirements.willRequirements.selfProving ? 'Available' : 'Not available'}</p>
+                        {stateRequirements.inheritance.estateTaxThreshold > 0 && (
+                          <p><strong>Estate Tax:</strong> ${stateRequirements.inheritance.estateTaxThreshold.toLocaleString()}</p>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {stateRequirements.specificRules.length > 0 && (
+                      <div className="mt-3">
+                        <p className="font-medium text-blue-900 mb-2">State-Specific Rules:</p>
+                        <ul className="text-xs text-blue-800 space-y-1">
+                          {stateRequirements.specificRules.map((rule, idx) => (
+                            <li key={idx}>• {rule}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
             {currentStep === 2 && (
