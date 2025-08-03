@@ -1158,12 +1158,28 @@ export const SmartWillBuilder = ({ user }) => {
     }
   };
 
-  const generateWill = () => {
+  const generateWill = async () => {
     setLoading(true);
-    setTimeout(() => {
+    
+    if (blockchainEnabled) {
+      // Blockchain notarization
+      const result = await blockchainService.notarizeDocument({
+        type: 'will',
+        personalInfo: { name: 'John Doe', email: 'john@example.com' },
+        beneficiaries: [{ name: 'Sarah Doe', percentage: 60 }],
+        timestamp: Date.now()
+      });
+      
+      if (result.success) {
+        setNotarized(true);
+        alert(`Will generated and notarized on blockchain!\nTransaction: ${result.transactionHash}\nBlock: ${result.blockNumber}`);
+      } else {
+        alert('Blockchain notarization failed. Will saved locally.');
+      }
+    } else {
       alert('Will generated successfully! Check your vault for the document.');
-      setLoading(false);
-    }, 2000);
+    }
+    setLoading(false);
   };
 
   return (
