@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the newly integrated blockchain features in the NextEra Estate application at http://localhost:3000. Test blockchain functionality including login, navigation to Blockchain page, MetaMask wallet connection interface, enhanced Will Builder with blockchain notarization step, Document Vault blockchain features, Dashboard blockchain status widget, and all blockchain-related UI components and interactions."
+user_problem_statement: "Please thoroughly test the newly integrated 50-State Compliance system in the NextEra Estate application at http://localhost:3000. Test comprehensive features including registration with state selection, 50-State Compliance Dashboard with all 4 tabs, enhanced Will Builder with state selection, Dashboard integration with state compliance widgets, and comprehensive functionality across different states (CA, NY, TX, FL, etc.) with real-time compliance checking and validation."
 
 frontend:
   - task: "Homepage load and design verification"
