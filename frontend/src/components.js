@@ -1008,7 +1008,33 @@ const SecurityStatusItem = ({ label, status, icon, isGood }) => (
   </div>
 );
 
-// 50-State Compliance Dashboard Component
+// State name to code mapping for backward compatibility
+const STATE_NAME_TO_CODE = {
+  'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR', 'California': 'CA',
+  'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE', 'Florida': 'FL', 'Georgia': 'GA',
+  'Hawaii': 'HI', 'Idaho': 'ID', 'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA',
+  'Kansas': 'KS', 'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
+  'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS', 'Missouri': 'MO',
+  'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV', 'New Hampshire': 'NH', 'New Jersey': 'NJ',
+  'New Mexico': 'NM', 'New York': 'NY', 'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH',
+  'Oklahoma': 'OK', 'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+  'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT', 'Vermont': 'VT',
+  'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV', 'Wisconsin': 'WI', 'Wyoming': 'WY'
+};
+
+// Helper function to convert user jurisdiction to state code
+const getUserStateCode = (userJurisdiction) => {
+  if (!userJurisdiction) return 'CA'; // Default to California
+  
+  // If already a state code, return it
+  if (userJurisdiction.length === 2 && US_STATES_COMPLIANCE[userJurisdiction]) {
+    return userJurisdiction;
+  }
+  
+  // Extract state name from formats like "California, USA" or "California"
+  const stateName = userJurisdiction.split(',')[0].trim();
+  return STATE_NAME_TO_CODE[stateName] || 'CA';
+};
 export const StateComplianceDashboard = ({ user }) => {
   const [selectedStates, setSelectedStates] = useState([user?.jurisdiction || 'CA'].filter(Boolean));
   const [comparisonData, setComparisonData] = useState({});
