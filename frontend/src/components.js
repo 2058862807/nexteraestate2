@@ -705,7 +705,7 @@ export const Dashboard = ({ user }) => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <StatCard
             title="Documents Stored"
             value={stats.documentsStored}
@@ -726,6 +726,13 @@ export const Dashboard = ({ user }) => {
             icon="👥"
             color="purple"
             onClick={() => navigate('/heirs')}
+          />
+          <StatCard
+            title="State Compliance"
+            value={user?.jurisdiction || 'CA'}
+            icon="🏛️"
+            color="orange"
+            onClick={() => navigate('/compliance')}
           />
           <StatCard
             title="Last Backup"
