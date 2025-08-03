@@ -1424,6 +1424,16 @@ export const DocumentVault = ({ user }) => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="text-green-600 text-xs bg-green-100 px-2 py-1 rounded">🔒 Encrypted</span>
+                  {doc.notarized ? (
+                    <span className="text-purple-600 text-xs bg-purple-100 px-2 py-1 rounded">⛓️ Notarized</span>
+                  ) : (
+                    <button
+                      onClick={() => notarizeDocument(doc.id)}
+                      className="text-blue-600 text-xs bg-blue-100 px-2 py-1 rounded hover:bg-blue-200"
+                    >
+                      🔗 Notarize
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
