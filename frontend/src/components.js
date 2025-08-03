@@ -850,7 +850,7 @@ export const Dashboard = ({ user }) => {
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between">
                     <span>Current State:</span>
-                    <span className="text-orange-600 font-medium">{US_STATES_COMPLIANCE[user?.jurisdiction || 'CA']?.name || 'CA'}</span>
+                    <span className="text-orange-600 font-medium">{US_STATES_COMPLIANCE[getUserStateCode(user?.jurisdiction)]?.name || 'California'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Legal Updates:</span>
