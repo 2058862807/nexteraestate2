@@ -2160,27 +2160,188 @@ export const ProfileSettings = ({ user }) => {
   );
 };
 
-// Grief Companion Component
+// Enhanced AI Grief Companion with Sophisticated Responses
 export const GriefCompanion = ({ user }) => {
   const [messages, setMessages] = useState([
-    { id: 1, type: 'ai', content: 'Hello, I\'m here to provide support during this difficult time. How are you feeling today?', timestamp: new Date() }
+    { 
+      id: 1, 
+      type: 'ai', 
+      content: 'Hello, I\'m here to provide support during this difficult time. I understand that grief is a deeply personal journey, and I\'m here to listen without judgment. How are you feeling today?', 
+      timestamp: new Date() 
+    }
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [conversationContext, setConversationContext] = useState({
+    emotionalState: 'initial',
+    mentionedTopics: [],
+    sessionLength: 0,
+    supportLevel: 'gentle'
+  });
+  const messagesEndRef = useRef(null);
 
-  const handleSendMessage = () => {
+  // Sophisticated AI response system
+  const generateAIResponse = (userMessage) => {
+    const message = userMessage.toLowerCase();
+    const context = conversationContext;
+    
+    // Emotional keyword detection
+    const sadWords = ['sad', 'crying', 'tears', 'miss', 'lonely', 'empty', 'lost', 'hurt', 'pain'];
+    const angryWords = ['angry', 'mad', 'furious', 'rage', 'unfair', 'hate', 'frustrated'];
+    const anxiousWords = ['worried', 'scared', 'anxious', 'nervous', 'afraid', 'overwhelmed'];
+    const hopeWords = ['better', 'healing', 'hope', 'forward', 'strength', 'grateful', 'thankful'];
+    const memoryWords = ['remember', 'memory', 'memories', 'used to', 'always', 'never forget'];
+    const familyWords = ['family', 'children', 'spouse', 'husband', 'wife', 'kids', 'relatives'];
+    
+    let response = '';
+    let emotionalState = context.emotionalState;
+    
+    // Detect emotional state and respond appropriately
+    if (sadWords.some(word => message.includes(word))) {
+      emotionalState = 'sad';
+      const sadResponses = [
+        "I can hear the sadness in your words, and that's completely understandable. Grief often feels like an ocean of sadness that we're swimming in. It's okay to feel this way - your emotions are valid and natural.",
+        "Sadness is one of grief's most persistent companions. The tears you're shedding are a testament to the love you shared. It's okay to sit with this sadness for a while. Would you like to tell me about what's making you feel particularly sad right now?",
+        "The depth of your sadness reflects the depth of your love. There's no timeline for grief, and no 'right' way to feel. Your sadness is honored here. Sometimes it helps to let the tears flow - they carry some of the pain away with them.",
+        "I'm sitting here with you in this sadness. You don't have to carry it alone. Grief can feel like drowning sometimes, but remember that even in the deepest ocean, there are moments when we surface to breathe. What has been your biggest source of sadness today?"
+      ];
+      response = sadResponses[Math.floor(Math.random() * sadResponses.length)];
+    }
+    
+    else if (angryWords.some(word => message.includes(word))) {
+      emotionalState = 'angry';
+      const angryResponses = [
+        "Anger is a natural part of grief, though it often surprises people. You might be angry at the situation, at yourself, at others, or even at your loved one for leaving. All of these feelings are normal and valid. What's stirring up this anger for you?",
+        "I hear your anger, and it's completely understandable. Grief isn't just sadness - it can be rage at the unfairness of loss. Your anger deserves to be acknowledged and processed safely. Would you like to talk about what's making you feel this way?",
+        "Anger in grief is like a fire that needs to be expressed safely rather than suppressed. Sometimes we're angry because we feel helpless, or because the world seems to keep moving when ours has stopped. Your anger is valid - how can we help you process it?",
+        "Many people are surprised by how angry grief can make them feel. It's often easier to be angry than to face the underlying hurt and vulnerability. Your anger is telling us something important about your pain. What's underneath this anger?"
+      ];
+      response = angryResponses[Math.floor(Math.random() * angryResponses.length)];
+    }
+    
+    else if (anxiousWords.some(word => message.includes(word))) {
+      emotionalState = 'anxious';
+      const anxiousResponses = [
+        "Anxiety and worry are very common in grief. You might be anxious about the future, about how you'll cope, or about forgetting your loved one. These worries are understandable given the magnitude of your loss. What's been worrying you most?",
+        "The anxiety you're feeling makes perfect sense. Grief can make the world feel uncertain and unsafe. Your nervous system is trying to protect you, but it can leave you feeling overwhelmed. Let's take this one moment at a time. What feels most overwhelming right now?",
+        "Anxiety often comes with grief because everything feels different and uncertain. Your mind might be racing with 'what if' questions. This is your heart trying to regain some sense of control. Would it help to talk through some of these worries together?",
+        "I understand you're feeling anxious or overwhelmed. Grief can make us feel like we're walking on unstable ground. Sometimes focusing on just the next breath, the next moment, can help. What would help you feel a little more grounded right now?"
+      ];
+      response = anxiousResponses[Math.floor(Math.random() * anxiousResponses.length)];
+    }
+    
+    else if (hopeWords.some(word => message.includes(word))) {
+      emotionalState = 'hopeful';
+      const hopeResponses = [
+        "I'm glad to hear some hope in your words. Healing doesn't mean forgetting - it means learning to carry your love in a new way. These moments of hope are important milestones in your journey. What's helping you feel more hopeful today?",
+        "It takes courage to speak of hope and healing while grieving. You're not betraying your loved one by having moments of light - you're honoring them by continuing to live and grow. How does it feel to notice this shift in yourself?",
+        "Hope can feel complicated in grief - like you're being disloyal to your loved one by feeling better. But hope is actually a gift they would want for you. Your healing honors their memory. What's been your source of strength or hope recently?",
+        "I hear the resilience in your words. Grief and hope can coexist - it's not one or the other. Your ability to find light even in darkness shows incredible strength. Your loved one would be proud of your courage to keep going."
+      ];
+      response = hopeResponses[Math.floor(Math.random() * hopeResponses.length)];
+    }
+    
+    else if (memoryWords.some(word => message.includes(word))) {
+      emotionalState = 'reflective';
+      const memoryResponses = [
+        "Memories are precious gifts that no one can take away from you. Each memory is a thread in the tapestry of your relationship that continues even after death. Would you like to share a favorite memory? Sometimes speaking them aloud helps keep them vivid.",
+        "Thank you for sharing this memory. These stories keep your loved one's spirit alive and present. Memories can be both comforting and painful - they remind us of what we had and what we've lost. How does it feel to remember this particular moment?",
+        "What a beautiful way to honor your loved one - through memory. Every time you remember them, you're keeping a part of them alive in the world. These memories are treasures that grow more precious with time. Tell me more about what you remember most.",
+        "Memories are how love continues after death. Your ability to remember, to tell their story, to keep their essence alive in your heart - this is one of the most beautiful aspects of human love. What memory has been visiting you most often lately?"
+      ];
+      response = memoryResponses[Math.floor(Math.random() * memoryResponses.length)];
+    }
+    
+    else if (familyWords.some(word => message.includes(word))) {
+      emotionalState = 'family-focused';
+      const familyResponses = [
+        "Family relationships can become more complex during grief. Everyone grieves differently, and sometimes family members struggle to understand each other's processes. It's challenging when you need support but others are struggling too. How is your family coping together?",
+        "Grief affects entire family systems, and everyone's timeline and expression of grief is different. Sometimes this creates tension or misunderstandings. You might feel like you need to be strong for others, or frustrated that others aren't grieving 'the right way.' What's your experience been with family during this time?",
+        "Supporting family while grieving yourself is one of the hardest aspects of loss. You might feel torn between your own needs and caring for others who are also hurting. Remember that you can't pour from an empty cup. How are you balancing your own grief with family needs?",
+        "Family can be both a source of comfort and additional stress during grief. Different coping styles, disagreements about memorial services, or old family dynamics can all surface during loss. What has been most helpful or challenging about family support during this time?"
+      ];
+      response = familyResponses[Math.floor(Math.random() * familyResponses.length)];
+    }
+    
+    // Handle specific grief stages or general support
+    else if (message.includes('help') || message.includes('support')) {
+      const helpResponses = [
+        "I'm here to help however I can. Grief support can take many forms - sometimes it's just having someone listen, other times it's practical guidance or coping strategies. What kind of support feels most needed right now?",
+        "Asking for help is a sign of strength, not weakness. Grief is not meant to be carried alone. Whether you need emotional support, practical help, or just someone to sit with you in the pain, you deserve care and support. What would be most helpful?",
+        "Support during grief might look different than you expect. Sometimes it's someone bringing dinner, sometimes it's a friend who lets you cry without trying to fix anything. What has been most helpful so far, and what do you find yourself needing most?",
+        "I'm honored that you're reaching out for support. That takes courage. Everyone's support needs are different - some people need to talk, others need quiet presence, others need help with practical matters. How can I best support you right now?"
+      ];
+      response = helpResponses[Math.floor(Math.random() * helpResponses.length)];
+    }
+    
+    else if (message.includes('alone') || message.includes('isolated')) {
+      const lonelinessResponses = [
+        "Loneliness in grief can feel overwhelming. Even when surrounded by people, you might feel profoundly alone because the one person you want to talk to isn't there. This loneliness is part of the grief journey, but you don't have to navigate it entirely by yourself.",
+        "The loneliness of grief is unique - it's not just being physically alone, but feeling like no one truly understands what you're going through. Your feelings of isolation are valid, and I want you to know that you're not as alone as you feel right now.",
+        "Grief can be incredibly isolating. People around you might not know what to say or do, leaving you feeling alone with your pain. Please know that feeling lonely doesn't mean you are alone - there are people who care, even if it doesn't always feel that way.",
+        "I hear how alone you're feeling, and I want you to know that this loneliness, while painful, is shared by many people walking the grief journey. You're part of a larger human experience, even when it feels like you're the only one in the world experiencing this pain."
+      ];
+      response = lonelinessResponses[Math.floor(Math.random() * lonelinessResponses.length)];
+    }
+    
+    // Default empathetic responses
+    else {
+      const generalResponses = [
+        "Thank you for sharing that with me. I'm listening and I'm here with you in whatever you're experiencing. Grief is deeply personal, and there's no right or wrong way to feel. What's been on your heart lately?",
+        "I appreciate you opening up about your experience. Grief can be so isolating, but you're not alone in this journey. Every feeling you have is valid and deserves to be acknowledged. How has today been for you?",
+        "Your words matter, and your experience matters. Grief teaches us that love doesn't end with death - it transforms. I'm here to listen to whatever you need to express, whether it's pain, confusion, memories, or anything else.",
+        "I'm grateful you feel comfortable sharing with me. Grief is one of the most profound human experiences, and it takes courage to be vulnerable about what you're going through. Tell me more about what's in your heart right now.",
+        "There's something powerful about putting our grief into words, even when words feel inadequate for the depth of our loss. I'm here to hold space for whatever you're experiencing. What would it help to talk about?"
+      ];
+      response = generalResponses[Math.floor(Math.random() * generalResponses.length)];
+    }
+
+    // Update conversation context
+    setConversationContext(prev => ({
+      ...prev,
+      emotionalState,
+      sessionLength: prev.sessionLength + 1,
+      mentionedTopics: [...new Set([...prev.mentionedTopics, emotionalState])]
+    }));
+
+    return response;
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
 
-    const userMessage = { id: messages.length + 1, type: 'user', content: inputMessage, timestamp: new Date() };
+    const userMessage = {
+      id: messages.length + 1,
+      type: 'user',
+      content: inputMessage,
+      timestamp: new Date()
+    };
+
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsTyping(true);
 
+    // Simulate realistic AI thinking time
+    const thinkingTime = Math.random() * 2000 + 1500; // 1.5-3.5 seconds
+    
     setTimeout(() => {
-      const aiResponse = { id: messages.length + 2, type: 'ai', content: 'I understand this is challenging. Would you like to share what\'s on your mind?', timestamp: new Date() };
+      const aiResponse = {
+        id: messages.length + 2,
+        type: 'ai',
+        content: generateAIResponse(inputMessage),
+        timestamp: new Date()
+      };
       setMessages(prev => [...prev, aiResponse]);
       setIsTyping(false);
-    }, 2000);
+    }, thinkingTime);
   };
 
   return (
