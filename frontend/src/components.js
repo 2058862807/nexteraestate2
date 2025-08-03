@@ -2346,66 +2346,194 @@ export const GriefCompanion = ({ user }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">AI Grief Companion</h1>
           <p className="text-gray-600">Compassionate support with memory playback and guidance</p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm h-96 flex flex-col">
-          <div className="p-4 border-b border-gray-200">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white">💜</div>
-              <div>
-                <h3 className="font-medium">Compassionate AI</h3>
-                <p className="text-sm text-gray-500">Here to listen and support you</p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Chat Area */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl shadow-sm h-96 flex flex-col">
+              <div className="p-4 border-b border-gray-200">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white">💜</div>
+                  <div>
+                    <h3 className="font-medium">Compassionate AI</h3>
+                    <p className="text-sm text-gray-500">Here to listen and support you</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {messages.map((message) => (
+                  <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-xs px-4 py-2 rounded-lg ${
+                      message.type === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900'
+                    }`}>
+                      <p className="text-sm">{message.content}</p>
+                      <p className={`text-xs mt-1 ${message.type === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
+                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                {isTyping && (
+                  <div className="flex justify-start">
+                    <div className="bg-gray-100 px-4 py-2 rounded-lg">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-4 border-t border-gray-200">
+                <div className="flex space-x-3">
+                  <input
+                    type="text"
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    placeholder="Share your thoughts or feelings..."
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    onClick={handleSendMessage}
+                    disabled={!inputMessage.trim() || isTyping}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    Send
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.map((message) => (
-              <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-xs px-4 py-2 rounded-lg ${
-                  message.type === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900'
-                }`}>
-                  <p className="text-sm">{message.content}</p>
-                  <p className={`text-xs mt-1 ${message.type === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
-                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Support Resources */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">💝 Support Resources</h3>
+              <div className="space-y-3">
+                <button 
+                  onClick={() => {
+                    const memoryPrompt = "Would you like to share a favorite memory of your loved one? Sometimes talking about the good times can bring comfort.";
+                    setMessages(prev => [...prev, { id: Date.now(), type: 'ai', content: memoryPrompt, timestamp: new Date() }]);
+                  }}
+                  className="w-full text-left p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+                >
+                  <div className="font-medium text-purple-900">💭 Memory Sharing</div>
+                  <div className="text-sm text-purple-700">Share precious memories together</div>
+                </button>
+                
+                <button 
+                  onClick={() => {
+                    const breathingPrompt = "Let's take a moment to breathe together. Close your eyes if you feel comfortable, and let's focus on slow, deep breaths. Breathe in for 4 counts... hold for 4... breathe out for 6. You're safe here.";
+                    setMessages(prev => [...prev, { id: Date.now(), type: 'ai', content: breathingPrompt, timestamp: new Date() }]);
+                  }}
+                  className="w-full text-left p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                >
+                  <div className="font-medium text-blue-900">🌬️ Breathing Exercise</div>
+                  <div className="text-sm text-blue-700">Calming breathing techniques</div>
+                </button>
+                
+                <button 
+                  onClick={() => {
+                    const journalPrompt = "Writing can be healing. Would you like me to guide you through some journaling prompts? We could explore your feelings, memories, or thoughts about your grief journey.";
+                    setMessages(prev => [...prev, { id: Date.now(), type: 'ai', content: journalPrompt, timestamp: new Date() }]);
+                  }}
+                  className="w-full text-left p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+                >
+                  <div className="font-medium text-green-900">📝 Grief Journaling</div>
+                  <div className="text-sm text-green-700">Express feelings through writing</div>
+                </button>
+                
+                <button 
+                  onClick={() => {
+                    const supportPrompt = "Grief can feel overwhelming. Remember: it's okay to not be okay. Healing isn't linear. You're stronger than you know, even when you feel broken. Your loved one's memory lives on through you. What's one small thing you can do for yourself today?";
+                    setMessages(prev => [...prev, { id: Date.now(), type: 'ai', content: supportPrompt, timestamp: new Date() }]);
+                  }}
+                  className="w-full text-left p-3 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors"
+                >
+                  <div className="font-medium text-orange-900">💪 Daily Affirmations</div>
+                  <div className="text-sm text-orange-700">Gentle reminders of strength</div>
+                </button>
               </div>
-            ))}
-            {isTyping && (
-              <div className="flex justify-start">
-                <div className="bg-gray-100 px-4 py-2 rounded-lg">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+            </div>
 
-          <div className="p-4 border-t border-gray-200">
-            <div className="flex space-x-3">
-              <input
-                type="text"
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                placeholder="Share your thoughts or feelings..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                onClick={handleSendMessage}
-                disabled={!inputMessage.trim() || isTyping}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-              >
-                Send
-              </button>
+            {/* Crisis Support */}
+            <div className="bg-red-50 border border-red-200 rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-red-900 mb-4">🆘 Crisis Support</h3>
+              <p className="text-sm text-red-800 mb-4">
+                If you're in crisis or need immediate support, please reach out:
+              </p>
+              <div className="space-y-2 text-sm">
+                <div className="font-medium text-red-900">Crisis Text Line</div>
+                <div className="text-red-700">Text HOME to 741741</div>
+                <div className="font-medium text-red-900 mt-3">988 Suicide & Crisis Lifeline</div>
+                <div className="text-red-700">Call or Text 988</div>
+                <div className="font-medium text-red-900 mt-3">Grief Support Helpline</div>
+                <div className="text-red-700">1-800-395-5755</div>
+              </div>
+            </div>
+
+            {/* Session Info */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">💬 Session Info</h3>
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">Session Length</span>
+                  <span className="font-medium">{conversationContext.sessionLength} messages</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">Emotional State</span>
+                  <span className={`px-2 py-1 rounded text-xs ${
+                    conversationContext.emotionalState === 'sad' ? 'bg-blue-100 text-blue-800' :
+                    conversationContext.emotionalState === 'angry' ? 'bg-red-100 text-red-800' :
+                    conversationContext.emotionalState === 'anxious' ? 'bg-yellow-100 text-yellow-800' :
+                    conversationContext.emotionalState === 'hopeful' ? 'bg-green-100 text-green-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {conversationContext.emotionalState}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">Support Level</span>
+                  <span className="text-purple-600 font-medium">{conversationContext.supportLevel}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* AI Capabilities */}
+            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">🤖 AI Capabilities</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-500">✓</span>
+                  <span className="text-gray-700">Emotional state recognition</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-500">✓</span>
+                  <span className="text-gray-700">Personalized responses</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-500">✓</span>
+                  <span className="text-gray-700">Memory-based conversations</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-500">✓</span>
+                  <span className="text-gray-700">Crisis detection</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-500">✓</span>
+                  <span className="text-gray-700">Grief stage awareness</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
