@@ -1187,6 +1187,30 @@ export const SmartWillBuilder = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [blockchainEnabled, setBlockchainEnabled] = useState(false);
   const [notarized, setNotarized] = useState(false);
+  const [willData, setWillData] = useState({
+    personalInfo: { 
+      fullName: user?.name || '', 
+      age: '', 
+      state: user?.jurisdiction || '',
+      maritalStatus: ''
+    },
+    assets: [],
+    beneficiaries: [],
+    witnesses: []
+  });
+  const [complianceStatus, setComplianceStatus] = useState(null);
+  const [stateRequirements, setStateRequirements] = useState(null);
+
+  // Real-time compliance checking
+  useEffect(() => {
+    if (willData.personalInfo.state && willData.personalInfo.age) {
+      const compliance = stateComplianceService.validateWillRequirements(willData, willData.personalInfo.state);
+      setComplianceStatus(compliance);
+      
+      const requirements = stateComplianceService.getStateCompliance(willData.personalInfo.state);
+      setStateRequirements(requirements);
+    }
+  }, [willData]);
 
   const steps = [
     { id: 1, title: 'Personal Info', icon: '👤' },
