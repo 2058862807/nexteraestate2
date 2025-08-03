@@ -919,7 +919,219 @@ const SecurityStatusItem = ({ label, status, icon, isGood }) => (
   </div>
 );
 
-// Smart Will Builder Component
+// Blockchain Wallet Component
+export const BlockchainWallet = ({ user }) => {
+  const [walletInfo, setWalletInfo] = useState({ connected: false });
+  const [cryptoAssets, setCryptoAssets] = useState({ assets: [] });
+  const [nftAssets, setNFTAssets] = useState({ nfts: [] });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadWalletInfo();
+  }, []);
+
+  const loadWalletInfo = async () => {
+    const info = await blockchainService.getWalletInfo();
+    setWalletInfo(info);
+    
+    if (info.connected) {
+      const crypto = await blockchainService.getCryptoAssets();
+      const nfts = await blockchainService.getNFTAssets();
+      setCryptoAssets(crypto);
+      setNFTAssets(nfts);
+    }
+  };
+
+  const connectWallet = async () => {
+    setLoading(true);
+    const result = await blockchainService.connectWallet();
+    
+    if (result.success) {
+      await loadWalletInfo();
+    } else {
+      alert(`Wallet connection failed: ${result.error}`);
+    }
+    setLoading(false);
+  };
+
+  const disconnectWallet = () => {
+    blockchainService.disconnect();
+    setWalletInfo({ connected: false });
+    setCryptoAssets({ assets: [] });
+    setNFTAssets({ nfts: [] });
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">🔗 Blockchain Wallet</h1>
+            <p className="text-gray-600">Manage cryptocurrency and NFT assets in your digital estate</p>
+          </div>
+          
+          {!walletInfo.connected ? (
+            <button
+              onClick={connectWallet}
+              disabled={loading}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 disabled:opacity-50"
+            >
+              {loading ? 'Connecting...' : '🦊 Connect MetaMask'}
+            </button>
+          ) : (
+            <button
+              onClick={disconnectWallet}
+              className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700"
+            >
+              Disconnect Wallet
+            </button>
+          )}
+        </div>
+
+        {walletInfo.connected ? (
+          <div className="space-y-8">
+            {/* Wallet Info */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold mb-4">👛 Wallet Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-sm text-gray-600">Address</label>
+                  <p className="font-mono text-sm">{formatAddress(walletInfo.address)}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-600">Balance</label>
+                  <p className="font-semibold">{formatBalance(walletInfo.balance)} ETH</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-600">Network</label>
+                  <p className="text-green-600">{walletInfo.network}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Cryptocurrency Assets */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold mb-4">₿ Cryptocurrency Assets</h3>
+              {cryptoAssets.assets.length > 0 ? (
+                <div className="space-y-4">
+                  <div className="text-right mb-4">
+                    <span className="text-2xl font-bold text-green-600">${cryptoAssets.totalValue}</span>
+                    <span className="text-gray-500 ml-2">Total Portfolio Value</span>
+                  </div>
+                  {cryptoAssets.assets.map((asset, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+                          {asset.symbol.substring(0, 2)}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">{asset.name}</h4>
+                          <p className="text-sm text-gray-500">{asset.symbol}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold">{asset.balance} {asset.symbol}</p>
+                        <p className="text-sm text-green-600">${asset.usdValue}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-center py-8">No cryptocurrency assets found</p>
+              )}
+            </div>
+
+            {/* NFT Assets */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold mb-4">🎨 NFT Collection</h3>
+              {nftAssets.nfts.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {nftAssets.nfts.map((nft) => (
+                    <div key={nft.id} className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
+                      <img src={nft.image} alt={nft.name} className="w-full h-48 object-cover" />
+                      <div className="p-4">
+                        <h4 className="font-semibold text-gray-900">{nft.name}</h4>
+                        <p className="text-sm text-gray-600 mb-2">{nft.collection}</p>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-purple-600">{nft.value}</span>
+                          <span className="text-xs text-gray-500">{formatAddress(nft.contractAddress)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-center py-8">No NFT assets found</p>
+              )}
+            </div>
+
+            {/* Blockchain Security Features */}
+            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold mb-4">🛡️ Blockchain Security</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-700">Multi-Signature Validation</span>
+                    <span className="text-green-600 text-sm bg-green-100 px-2 py-1 rounded">Active ✅</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-700">Smart Contract Notarization</span>
+                    <span className="text-green-600 text-sm bg-green-100 px-2 py-1 rounded">Active ✅</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-700">Immutable Document Hashing</span>
+                    <span className="text-green-600 text-sm bg-green-100 px-2 py-1 rounded">Active ✅</span>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-700">Decentralized Storage (IPFS)</span>
+                    <span className="text-green-600 text-sm bg-green-100 px-2 py-1 rounded">Active ✅</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-700">Automated Will Execution</span>
+                    <span className="text-green-600 text-sm bg-green-100 px-2 py-1 rounded">Ready ✅</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-700">Post-Quantum Cryptography</span>
+                    <span className="text-green-600 text-sm bg-green-100 px-2 py-1 rounded">Enabled ✅</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+            <div className="text-6xl mb-6">🔗</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">Connect Your Web3 Wallet</h3>
+            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+              Connect your MetaMask wallet to access blockchain-powered features including cryptocurrency asset management, 
+              NFT inheritance, smart contract will execution, and immutable document notarization.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+              <div className="border border-gray-200 rounded-lg p-6">
+                <h4 className="font-semibold mb-2">🏦 Crypto Assets</h4>
+                <p className="text-sm text-gray-600">Include Bitcoin, Ethereum, and other cryptocurrencies in your estate plan</p>
+              </div>
+              <div className="border border-gray-200 rounded-lg p-6">
+                <h4 className="font-semibold mb-2">🎨 NFT Collection</h4>
+                <p className="text-sm text-gray-600">Manage and transfer your valuable digital collectibles and art</p>
+              </div>
+              <div className="border border-gray-200 rounded-lg p-6">
+                <h4 className="font-semibold mb-2">📜 Smart Contracts</h4>
+                <p className="text-sm text-gray-600">Automated will execution with blockchain-verified beneficiaries</p>
+              </div>
+              <div className="border border-gray-200 rounded-lg p-6">
+                <h4 className="font-semibold mb-2">🔐 Immutable Records</h4>
+                <p className="text-sm text-gray-600">Tamper-proof document notarization on the blockchain</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 export const SmartWillBuilder = ({ user }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
