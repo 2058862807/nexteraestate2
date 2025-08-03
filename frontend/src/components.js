@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { blockchainService, formatAddress, formatBalance } from './blockchain';
 
 // Header Component
 export const Header = ({ user, onLogout }) => {
