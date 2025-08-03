@@ -1035,8 +1035,10 @@ const getUserStateCode = (userJurisdiction) => {
   const stateName = userJurisdiction.split(',')[0].trim();
   return STATE_NAME_TO_CODE[stateName] || 'CA';
 };
+// 50-State Compliance Dashboard Component
 export const StateComplianceDashboard = ({ user }) => {
-  const [selectedStates, setSelectedStates] = useState([user?.jurisdiction || 'CA'].filter(Boolean));
+  const userStateCode = getUserStateCode(user?.jurisdiction);
+  const [selectedStates, setSelectedStates] = useState([userStateCode]);
   const [comparisonData, setComparisonData] = useState({});
   const [legalUpdates, setLegalUpdates] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
