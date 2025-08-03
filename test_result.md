@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the NextEra Estate application running at http://localhost:3000. Comprehensive testing of all pages, navigation, UI components, forms, and functionality including homepage, login, dashboard, will builder, document vault, heir management, AI grief companion, profile settings, and death trigger configuration."
+user_problem_statement: "Test the newly integrated blockchain features in the NextEra Estate application at http://localhost:3000. Test blockchain functionality including login, navigation to Blockchain page, MetaMask wallet connection interface, enhanced Will Builder with blockchain notarization step, Document Vault blockchain features, Dashboard blockchain status widget, and all blockchain-related UI components and interactions."
 
 frontend:
   - task: "Homepage load and design verification"
