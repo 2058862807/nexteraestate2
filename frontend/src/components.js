@@ -729,7 +729,7 @@ export const Dashboard = ({ user }) => {
           />
           <StatCard
             title="State Compliance"
-            value={user?.jurisdiction || 'CA'}
+            value={getUserStateCode(user?.jurisdiction)}
             icon="🏛️"
             color="orange"
             onClick={() => navigate('/compliance')}
