@@ -12,6 +12,7 @@ import {
   HeirManagement,
   ProfileSettings,
   GriefCompanion,
+  BlockchainWallet,
   Header,
   Footer
 } from './components';
