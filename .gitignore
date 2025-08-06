@@ -72,6 +72,10 @@ agenthub/agents/youtube/db
 *.pack
 *.deb
 *.dylib
+# Prevent secret leaks
+.env
+.env.*
+backend/.env
 
 # Build caches
 .cache/
